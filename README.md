@@ -1,5 +1,7 @@
 # tipid
 
+[![Build Status](https://travis-ci.org/tipidapp/mobile.svg?branch=master)](https://travis-ci.org/tipidapp/mobile)
+
 A new Flutter project.
 
 ## Getting Started
