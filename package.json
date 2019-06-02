@@ -1,0 +1,11 @@
+{
+  "name": "tipid",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Budgeting for everyone",
+  "homepage": "https://www.tipid.app",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tipidapp/mobile"
+  }
+}
