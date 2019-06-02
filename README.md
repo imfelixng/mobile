@@ -1,6 +1,7 @@
 # tipid
 
 [![Build Status](https://travis-ci.org/tipidapp/mobile.svg?branch=master)](https://travis-ci.org/tipidapp/mobile)
+[![Coverage Status](https://coveralls.io/repos/github/tipidapp/mobile/badge.svg?branch=master)](https://coveralls.io/github/tipidapp/mobile?branch=master)
 
 A new Flutter project.
 
