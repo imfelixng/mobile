@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
 
@@ -16,6 +17,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (BuildContext context) => LandingScreen(),
+        '/dashboard': (BuildContext context) => DashboardScreen(),
         '/sign_in': (BuildContext context) => SignInScreen(),
       },
     );
