@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LandingScreen extends StatelessWidget {
+  static const Key navigateToSignInButtonKey = Key('navigateToSignInButton');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +22,15 @@ class LandingScreen extends StatelessWidget {
                   ),
                 ),
               ],
-            )
+            ),
+            const SizedBox(height: 50.0),
+            RaisedButton(
+              key: navigateToSignInButtonKey,
+              onPressed: () {
+                Navigator.pushNamed(context, '/sign_in');
+              },
+              child: const Text('Login'),
+            ),
           ],
         ),
       ),
