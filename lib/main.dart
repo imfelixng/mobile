@@ -4,7 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/landing_screen.dart';
+import 'package:tipid/screens/settings_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
+import 'package:tipid/widgets/authenticated_view.dart';
 
 void main() => runApp(MyApp());
 
@@ -29,7 +31,7 @@ class MyApp extends StatelessWidget {
               builder: (BuildContext context,
                   AuthenticationState authenticationState, Widget child) {
                 if (authenticationState.authenticated) {
-                  return DashboardScreen();
+                  return AuthenticatedView();
                 } else {
                   return child;
                 }
@@ -38,6 +40,7 @@ class MyApp extends StatelessWidget {
             );
           },
           '/dashboard': (BuildContext context) => DashboardScreen(),
+          '/settings': (BuildContext context) => SettingsScreen(),
           '/sign_in': (BuildContext context) => SignInScreen(),
         },
       ),

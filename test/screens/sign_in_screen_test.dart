@@ -7,6 +7,7 @@ import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
+import 'package:tipid/widgets/authenticated_view.dart';
 
 import '../mocks.dart';
 
@@ -29,7 +30,7 @@ void main() {
                 builder: (BuildContext context,
                     AuthenticationState authenticationState, Widget child) {
                   if (authenticationState.authenticated) {
-                    return DashboardScreen();
+                    return AuthenticatedView();
                   } else {
                     return child;
                   }
@@ -37,7 +38,6 @@ void main() {
                 child: LandingScreen(),
               );
             },
-            '/dashboard': (BuildContext context) => DashboardScreen(),
             '/sign_in': (BuildContext context) => SignInScreen(),
           },
           navigatorObservers: <NavigatorObserver>[mockObserver],
