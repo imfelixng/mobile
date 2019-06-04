@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:tipid/services/authentication_service.dart';
+import 'package:tipid/state/authentication_state.dart';
 
 class SignInScreen extends StatelessWidget {
   @override
@@ -77,13 +81,28 @@ class SignInFormState extends State<SignInForm> {
           const SizedBox(height: 20.0),
           RaisedButton(
             key: signInButtonKey,
-            onPressed: () {
-              formKey.currentState.validate();
-            },
+            onPressed: _signInButtonPressed(context, formKey),
             child: const Text('Login'),
           ),
         ],
       ),
     );
+  }
+
+  Function _signInButtonPressed(
+      BuildContext context, GlobalKey<FormState> formKey) {
+    final AuthenticationState authenticationState =
+        Provider.of<AuthenticationState>(context);
+    final AuthenticationService authenticationService =
+        AuthenticationService(context: context, formKey: formKey);
+
+    if (authenticationState.loading) {
+      return null;
+    } else {
+      return () {
+        authenticationService.signIn(
+            emailController.text, passwordController.text);
+      };
+    }
   }
 }

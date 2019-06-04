@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:provider/provider.dart';
 
+import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
 
@@ -16,12 +18,15 @@ void main() {
     });
 
     Future<void> _buildLandingScreen(WidgetTester tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: LandingScreen(),
-        routes: <String, WidgetBuilder>{
-          '/sign_in': (BuildContext context) => SignInScreen(),
-        },
-        navigatorObservers: <NavigatorObserver>[mockObserver],
+      await tester.pumpWidget(ChangeNotifierProvider<AuthenticationState>(
+        builder: (BuildContext context) => AuthenticationState(),
+        child: MaterialApp(
+          home: LandingScreen(),
+          routes: <String, WidgetBuilder>{
+            '/sign_in': (BuildContext context) => SignInScreen(),
+          },
+          navigatorObservers: <NavigatorObserver>[mockObserver],
+        ),
       ));
     }
 
