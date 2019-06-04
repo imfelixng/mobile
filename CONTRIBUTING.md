@@ -161,7 +161,6 @@ As mentioned above, this project is built using [Flutter](https://flutter.io). A
 - `lib/services`: Contains service classes that are called by widgets to do the actual heavy lifting (aka business logic). A service class usually connects a state mutation (found in `lib/state`) and an API call (found in `lib/utils/api.dart`) to a widget.
 - `lib/state`: Provides a central location for the state which can be accessed anywhere inside the app. It contains the initial value of the state upon app load as well as some mutation functions to change the current value of the state.
 - `lib/utils`: Contains utility classes that are used all throughout the app.
-  - `lib/utils/api.dart`: Contains all the functions needed to access [BudgetHub's API endpoints](https://github.com/budgethub/core).
 - `lib/widgets`: Contains widgets that can be reused by more than one screen.
 
 ### State Management
