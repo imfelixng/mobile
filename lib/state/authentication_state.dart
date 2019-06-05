@@ -1,7 +1,15 @@
 import 'package:flutter/foundation.dart';
 
 class AuthenticationState with ChangeNotifier {
-  bool _authenticated = false;
+  AuthenticationState() {
+    _authenticated = false;
+  }
+
+  AuthenticationState.authenticated() {
+    _authenticated = true;
+  }
+
+  bool _authenticated;
   bool _loading = false;
 
   bool get authenticated => _authenticated;
@@ -14,6 +22,17 @@ class AuthenticationState with ChangeNotifier {
 
   void authenticationSuccess() {
     _authenticated = true;
+    _loading = false;
+    notifyListeners();
+  }
+
+  void signOutRequest() {
+    _loading = true;
+    notifyListeners();
+  }
+
+  void signOutSuccess() {
+    _authenticated = false;
     _loading = false;
     notifyListeners();
   }

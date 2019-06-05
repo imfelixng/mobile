@@ -22,4 +22,9 @@ class AuthenticationService {
       Navigator.of(context).pop();
     }
   }
+
+  Future<void> signOut() async {
+    authenticationState.signOutRequest();
+    authenticationState.signOutSuccess();
+  }
 }
