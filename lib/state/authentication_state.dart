@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 
+import 'package:tipid/models/session.dart';
+import 'package:tipid/models/user.dart';
+
 class AuthenticationState with ChangeNotifier {
   AuthenticationState() {
     _authenticated = false;
@@ -10,7 +13,11 @@ class AuthenticationState with ChangeNotifier {
   }
 
   bool _authenticated;
+  // ignore: unused_field
+  String _authenticationToken = '';
   bool _loading = false;
+  // ignore: unused_field
+  User _user;
 
   bool get authenticated => _authenticated;
   bool get loading => _loading;
@@ -20,8 +27,15 @@ class AuthenticationState with ChangeNotifier {
     notifyListeners();
   }
 
-  void authenticationSuccess() {
+  void authenticationSuccess(Session session) {
     _authenticated = true;
+    _authenticationToken = session.authenticationToken;
+    _loading = false;
+    _user = session.user;
+    notifyListeners();
+  }
+
+  void authenticationFailure() {
     _loading = false;
     notifyListeners();
   }
@@ -33,7 +47,9 @@ class AuthenticationState with ChangeNotifier {
 
   void signOutSuccess() {
     _authenticated = false;
+    _authenticationToken = '';
     _loading = false;
+    _user = null;
     notifyListeners();
   }
 }

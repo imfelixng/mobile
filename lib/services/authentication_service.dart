@@ -1,7 +1,10 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:tipid/models/session.dart';
 import 'package:tipid/state/authentication_state.dart';
+import 'package:tipid/utils/api.dart';
+import 'package:tipid/widgets/api_provider.dart';
 
 class AuthenticationService {
   AuthenticationService({
@@ -9,17 +12,33 @@ class AuthenticationService {
     this.formKey,
   }) {
     authenticationState = Provider.of<AuthenticationState>(context);
+    api = TipidApiProvider.of(context);
   }
 
   BuildContext context;
   GlobalKey<FormState> formKey;
   AuthenticationState authenticationState;
+  TipidApi api;
 
-  Future<void> signIn(String email, String password) async {
+  Future<void> signIn(TextEditingController emailController,
+      TextEditingController passwordController) async {
     if (formKey.currentState.validate()) {
       authenticationState.authenticationRequest();
-      authenticationState.authenticationSuccess();
-      Navigator.of(context).pop();
+
+      final Session session =
+          await api.signIn(emailController.text, passwordController.text);
+
+      if (session.successful) {
+        authenticationState.authenticationSuccess(session);
+        Navigator.of(context).pop();
+      } else {
+        passwordController.clear();
+        Scaffold.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(session.errors[0].message),
+        ));
+        authenticationState.authenticationFailure();
+      }
     }
   }
 

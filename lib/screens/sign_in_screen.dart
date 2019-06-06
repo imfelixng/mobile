@@ -46,6 +46,9 @@ class SignInFormState extends State<SignInForm> {
 
   @override
   Widget build(BuildContext context) {
+    final AuthenticationState authenticationState =
+        Provider.of<AuthenticationState>(context);
+
     return Form(
       key: formKey,
       child: Column(
@@ -57,6 +60,7 @@ class SignInFormState extends State<SignInForm> {
               labelText: 'Email Address',
               hintText: 'Enter your email address',
             ),
+            enabled: !authenticationState.loading,
             validator: (String value) {
               if (value.isEmpty) {
                 return 'Please enter your email address';
@@ -71,6 +75,7 @@ class SignInFormState extends State<SignInForm> {
             controller: passwordController,
             decoration: InputDecoration(
                 labelText: 'Password', hintText: 'Enter your password'),
+            enabled: !authenticationState.loading,
             obscureText: true,
             validator: (String value) {
               if (value.isEmpty) {
@@ -79,30 +84,31 @@ class SignInFormState extends State<SignInForm> {
             },
           ),
           const SizedBox(height: 20.0),
-          RaisedButton(
-            key: signInButtonKey,
-            onPressed: _signInButtonPressed(context, formKey),
-            child: const Text('Login'),
-          ),
+          _signInButton(context),
         ],
       ),
     );
   }
 
-  Function _signInButtonPressed(
-      BuildContext context, GlobalKey<FormState> formKey) {
-    final AuthenticationState authenticationState =
-        Provider.of<AuthenticationState>(context);
+  Widget _signInButton(BuildContext context) {
     final AuthenticationService authenticationService =
         AuthenticationService(context: context, formKey: formKey);
 
-    if (authenticationState.loading) {
-      return null;
-    } else {
-      return () {
-        authenticationService.signIn(
-            emailController.text, passwordController.text);
-      };
-    }
+    return Consumer<AuthenticationState>(
+      child: const Text('Login'),
+      builder: (BuildContext context, AuthenticationState authenticationState,
+          Widget child) {
+        return RaisedButton(
+          key: signInButtonKey,
+          onPressed: authenticationState.loading
+              ? null
+              : () => authenticationService.signIn(
+                  emailController, passwordController),
+          child: authenticationState.loading
+              ? const CircularProgressIndicator()
+              : child,
+        );
+      },
+    );
   }
 }

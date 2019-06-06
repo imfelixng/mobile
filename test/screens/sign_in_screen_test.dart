@@ -2,45 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
+import 'package:graphql/client.dart';
 
+import 'package:tipid/models/session.dart';
+import 'package:tipid/models/user.dart';
 import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
 import 'package:tipid/widgets/authenticated_view.dart';
+import 'package:tipid/widgets/api_provider.dart';
+import 'package:tipid/utils/api.dart';
 
 import '../mocks.dart';
 
 void main() {
   group('Sign In Screen tests', () {
     NavigatorObserver mockObserver;
+    TipidApi mockApi;
 
     setUp(() {
       mockObserver = MockNavigatorObserver();
+      mockApi = MockTipidApi();
     });
 
     Future<void> _buildSignInScreen(WidgetTester tester) async {
       await tester.pumpWidget(ChangeNotifierProvider<AuthenticationState>(
         builder: (BuildContext context) => AuthenticationState(),
-        child: MaterialApp(
-          initialRoute: '/',
-          routes: <String, WidgetBuilder>{
-            '/': (BuildContext context) {
-              return Consumer<AuthenticationState>(
-                builder: (BuildContext context,
-                    AuthenticationState authenticationState, Widget child) {
-                  if (authenticationState.authenticated) {
-                    return AuthenticatedView();
-                  } else {
-                    return child;
-                  }
-                },
-                child: LandingScreen(),
-              );
+        child: TipidApiProvider(
+          api: mockApi,
+          child: MaterialApp(
+            initialRoute: '/',
+            routes: <String, WidgetBuilder>{
+              '/': (BuildContext context) {
+                return Consumer<AuthenticationState>(
+                  builder: (BuildContext context,
+                      AuthenticationState authenticationState, Widget child) {
+                    if (authenticationState.authenticated) {
+                      return AuthenticatedView();
+                    } else {
+                      return child;
+                    }
+                  },
+                  child: LandingScreen(),
+                );
+              },
+              '/sign_in': (BuildContext context) => SignInScreen(),
             },
-            '/sign_in': (BuildContext context) => SignInScreen(),
-          },
-          navigatorObservers: <NavigatorObserver>[mockObserver],
+            navigatorObservers: <NavigatorObserver>[mockObserver],
+          ),
         ),
       ));
 
@@ -48,7 +58,8 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('Submitting form while entering valid data returns success',
+    testWidgets(
+        'Submitting form when entering valid data successfully authenticates the user',
         (WidgetTester tester) async {
       await _buildSignInScreen(tester);
 
@@ -56,11 +67,55 @@ void main() {
           'test@example.com');
       await tester.enterText(
           find.byKey(SignInFormState.passwordTextFormFieldKey), 'password');
+
+      final Session session = Session(
+        successful: true,
+        authenticationToken: 'abcd1234',
+        user: User(
+            id: 1234,
+            email: 'test@example.com',
+            firstName: 'Test',
+            lastName: 'User',
+            registeredAt: DateTime.parse('2019-06-01T08:00:20')),
+      );
+      when(mockApi.signIn(any, any))
+          .thenAnswer((_) => Future<Session>.value(session));
+
       await tester.tap(find.byKey(SignInFormState.signInButtonKey));
       await tester.pumpAndSettle();
 
+      verify(mockApi.signIn(any, any));
       verify(mockObserver.didPop(any, any));
       expect(find.byType(DashboardScreen), findsOneWidget);
+    });
+
+    testWidgets('Submitting form when user has not registered returns error',
+        (WidgetTester tester) async {
+      await _buildSignInScreen(tester);
+
+      await tester.enterText(find.byKey(SignInFormState.emailTextFormFieldKey),
+          'test@example.com');
+      await tester.enterText(
+          find.byKey(SignInFormState.passwordTextFormFieldKey), 'password');
+
+      final Session session = Session(
+        successful: false,
+        errors: <GraphQLError>[
+          GraphQLError(message: 'no user with matching credentials found'),
+        ],
+      );
+      when(mockApi.signIn(any, any))
+          .thenAnswer((_) => Future<Session>.value(session));
+
+      await tester.tap(find.byKey(SignInFormState.signInButtonKey));
+      await tester.pumpAndSettle();
+
+      verify(mockApi.signIn(any, any));
+      verifyNever(mockObserver.didPop(any, any));
+      expect(find.byType(DashboardScreen), findsNothing);
+      expect(find.byType(SnackBar), findsOneWidget);
+      expect(
+          find.text('no user with matching credentials found'), findsOneWidget);
     });
 
     testWidgets(
