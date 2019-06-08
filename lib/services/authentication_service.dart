@@ -46,4 +46,33 @@ class AuthenticationService {
     authenticationState.signOutRequest();
     authenticationState.signOutSuccess();
   }
+
+  Future<void> signUp(
+      TextEditingController emailController,
+      TextEditingController passwordController,
+      TextEditingController passwordConfirmationController,
+      TextEditingController firstNameController,
+      TextEditingController lastNameController) async {
+    if (formKey.currentState.validate()) {
+      authenticationState.authenticationRequest();
+
+      final Session session = await api.signUp(
+          emailController.text,
+          passwordController.text,
+          passwordConfirmationController.text,
+          firstNameController.text,
+          lastNameController.text);
+
+      if (session.successful) {
+        authenticationState.authenticationSuccess(session);
+        Navigator.of(context).pop();
+      } else {
+        Scaffold.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.red,
+          content: Text(session.errors[0].message),
+        ));
+        authenticationState.authenticationFailure();
+      }
+    }
+  }
 }

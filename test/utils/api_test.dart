@@ -68,5 +68,59 @@ void main() {
       expect(
           session.errors[0].message, 'no user with matching credentials found');
     });
+
+    test('signUp with valid credentials returns successful Session', () async {
+      final TipidApi api = TipidApi(client: mockGraphQLClient);
+
+      final QueryResult mockResult = QueryResult(
+        data: <String, dynamic>{
+          'signIn': <String, dynamic>{
+            'authenticationToken': 'abcd1234',
+            'user': <String, String>{
+              'id': '1234',
+              'email': 'test@example.com',
+              'firstName': 'Test',
+              'lastName': 'User',
+              'insertedAt': '2019-06-01T08:00:20',
+            },
+          },
+        },
+      );
+
+      when(mockGraphQLClient.mutate(any))
+          .thenAnswer((_) => Future<QueryResult>.value(mockResult));
+
+      final Session session = await api.signUp(
+          'test@example.com', 'password', 'password', 'Test', 'User');
+
+      verify(mockGraphQLClient.mutate(any));
+      expect(session.successful, true);
+      expect(session.authenticationToken, 'abcd1234');
+      expect(session.user.id, 1234);
+      expect(session.user.email, 'test@example.com');
+      expect(session.user.firstName, 'Test');
+      expect(session.user.lastName, 'User');
+      expect(session.user.registeredAt, DateTime.parse('2019-06-01T08:00:20'));
+    });
+
+    test('signUp with existing email returns failed Session', () async {
+      final TipidApi api = TipidApi(client: mockGraphQLClient);
+
+      final QueryResult mockResult = QueryResult(
+        errors: <GraphQLError>[
+          GraphQLError(message: 'email has already been taken'),
+        ],
+      );
+
+      when(mockGraphQLClient.mutate(any))
+          .thenAnswer((_) => Future<QueryResult>.value(mockResult));
+
+      final Session session = await api.signUp(
+          'test@example.com', 'password', 'password', 'Test', 'User');
+
+      verify(mockGraphQLClient.mutate(any));
+      expect(session.successful, false);
+      expect(session.errors[0].message, 'email has already been taken');
+    });
   });
 }

@@ -7,6 +7,7 @@ import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/settings_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
+import 'package:tipid/screens/sign_up_screen.dart';
 import 'package:tipid/widgets/api_provider.dart';
 import 'package:tipid/widgets/authenticated_view.dart';
 import 'package:tipid/utils/api.dart';
@@ -63,6 +64,7 @@ class MyApp extends StatelessWidget {
               '/dashboard': (BuildContext context) => DashboardScreen(),
               '/settings': (BuildContext context) => SettingsScreen(),
               '/sign_in': (BuildContext context) => SignInScreen(),
+              '/sign_up': (BuildContext context) => SignUpScreen(),
             },
           ),
         ),

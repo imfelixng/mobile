@@ -12,7 +12,11 @@ class Session {
 
   Session.fromGraphQLSuccess(QueryResult result) {
     successful = true;
-    authenticationToken = result.data['signIn']['authenticationToken'];
+
+    result.data.forEach((dynamic key, dynamic value) {
+      authenticationToken = value['authenticationToken'];
+    });
+
     user = User.fromGraphQL(result);
   }
 

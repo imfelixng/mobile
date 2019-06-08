@@ -10,11 +10,13 @@ class User {
   });
 
   User.fromGraphQL(QueryResult result) {
-    id = int.parse(result.data['signIn']['user']['id']);
-    email = result.data['signIn']['user']['email'];
-    firstName = result.data['signIn']['user']['firstName'];
-    lastName = result.data['signIn']['user']['lastName'];
-    registeredAt = DateTime.parse(result.data['signIn']['user']['insertedAt']);
+    result.data.forEach((dynamic key, dynamic value) {
+      id = int.parse(value['user']['id']);
+      email = value['user']['email'];
+      firstName = value['user']['firstName'];
+      lastName = value['user']['lastName'];
+      registeredAt = DateTime.parse(value['user']['insertedAt']);
+    });
   }
 
   int id;
