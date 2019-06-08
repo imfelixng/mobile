@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tipid/models/session.dart';
 import 'package:tipid/state/authentication_state.dart';
@@ -20,6 +22,20 @@ class AuthenticationService {
   AuthenticationState authenticationState;
   TipidApi api;
 
+  Future<void> checkAuthenticationStatus() async {
+    authenticationState.authenticationRequest();
+
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    final String currentSession = preferences.getString('currentSession');
+
+    if (currentSession == null || currentSession == '') {
+      authenticationState.authenticationFailure();
+    } else {
+      final Session session = Session.fromJson(json.decode(currentSession));
+      authenticationState.authenticationSuccess(session);
+    }
+  }
+
   Future<void> signIn(TextEditingController emailController,
       TextEditingController passwordController) async {
     if (formKey.currentState.validate()) {
@@ -29,6 +45,9 @@ class AuthenticationService {
           await api.signIn(emailController.text, passwordController.text);
 
       if (session.successful) {
+        final SharedPreferences preferences =
+            await SharedPreferences.getInstance();
+        await preferences.setString('currentSession', session.toString());
         authenticationState.authenticationSuccess(session);
         Navigator.of(context).pop();
       } else {
@@ -44,6 +63,10 @@ class AuthenticationService {
 
   Future<void> signOut() async {
     authenticationState.signOutRequest();
+
+    final SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.remove('currentSession');
+
     authenticationState.signOutSuccess();
   }
 
@@ -64,6 +87,9 @@ class AuthenticationService {
           lastNameController.text);
 
       if (session.successful) {
+        final SharedPreferences preferences =
+            await SharedPreferences.getInstance();
+        await preferences.setString('currentSession', session.toString());
         authenticationState.authenticationSuccess(session);
         Navigator.of(context).pop();
       } else {

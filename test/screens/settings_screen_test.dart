@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/dashboard_screen.dart';
@@ -17,6 +18,7 @@ void main() {
 
   setUp(() {
     mockApi = MockTipidApi();
+    SharedPreferences.setMockInitialValues(<String, dynamic>{});
   });
 
   group('Settings Screen tests', () {

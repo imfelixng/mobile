@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 import 'package:graphql/client.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:tipid/models/session.dart';
 import 'package:tipid/models/user.dart';
@@ -24,6 +25,7 @@ void main() {
     setUp(() {
       mockObserver = MockNavigatorObserver();
       mockApi = MockTipidApi();
+      SharedPreferences.setMockInitialValues(<String, dynamic>{});
     });
 
     Future<void> _buildSignInScreen(WidgetTester tester) async {

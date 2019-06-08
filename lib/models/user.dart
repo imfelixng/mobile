@@ -19,9 +19,27 @@ class User {
     });
   }
 
+  User.fromJson(Map<String, dynamic> json) {
+    id = int.parse(json['id']);
+    email = json['email'];
+    firstName = json['firstName'];
+    lastName = json['lastName'];
+    registeredAt = DateTime.parse(json['registeredAt']);
+  }
+
   int id;
   String email;
   String firstName;
   String lastName;
   DateTime registeredAt;
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id.toString(),
+      'email': email,
+      'firstName': firstName,
+      'lastName': lastName,
+      'registeredAt': registeredAt.toString(),
+    };
+  }
 }
