@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import 'package:tipid/utils/api.dart';
 
 class TipidApiProvider extends StatefulWidget {
-  TipidApiProvider({Key key, this.api, this.child}) : super(key: key);
+  const TipidApiProvider({Key key, this.api, this.child}) : super(key: key);
 
   final TipidApi api;
   final Widget child;
@@ -32,7 +32,7 @@ class TipidApiProviderState extends State<TipidApiProvider> {
 }
 
 class InheritedTipidApiProvider extends InheritedWidget {
-  InheritedTipidApiProvider({
+  const InheritedTipidApiProvider({
     this.api,
     Widget child,
   }) : super(child: child);

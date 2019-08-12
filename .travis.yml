@@ -1,5 +1,17 @@
 os:
   - linux
+language: android
+licenses:
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
+android:
+  components:
+    - tools
+    - platform-tools
+    - build-tools-28.0.3
+    - android-28
+jdk: oraclejdk8
 sudo: false
 addons:
   apt:
@@ -9,11 +21,12 @@ addons:
       - libstdc++6
       - fonts-droid
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b beta
+  - git clone https://github.com/flutter/flutter.git -b v1.7.8+hotfix.4 --depth=1
   - ./flutter/bin/flutter doctor
   - gem install coveralls-lcov
 script:
   - ./flutter/bin/flutter test --coverage
+  - ./flutter/bin/flutter analyze --no-pub --no-current-package lib/ test/
 after_success:
   - coveralls-lcov coverage/lcov.info
 cache:

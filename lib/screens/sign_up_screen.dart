@@ -78,6 +78,8 @@ class SignUpFormState extends State<SignUpForm> {
               } else if (!emailRegex.hasMatch(value)) {
                 return 'Please enter a valid email address';
               }
+
+              return null;
             },
           ),
           const SizedBox(height: 20.0),
@@ -92,6 +94,8 @@ class SignUpFormState extends State<SignUpForm> {
               if (value.isEmpty) {
                 return 'Please enter your password';
               }
+
+              return null;
             },
           ),
           const SizedBox(height: 20.0),
@@ -109,6 +113,8 @@ class SignUpFormState extends State<SignUpForm> {
               } else if (passwordController.text != value) {
                 return 'Does not match password';
               }
+
+              return null;
             },
           ),
           const SizedBox(height: 20.0),
