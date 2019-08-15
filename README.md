@@ -1,7 +1,7 @@
 # Tipid Mobile
 
-[![Build Status](https://travis-ci.org/tipidapp/mobile.svg?branch=master)](https://travis-ci.org/tipidapp/mobile)
-[![Coverage Status](https://coveralls.io/repos/github/tipidapp/mobile/badge.svg?branch=master)](https://coveralls.io/github/tipidapp/mobile?branch=master)
+[![CircleCI](https://circleci.com/gh/tipidapp/mobile.svg?style=svg)](https://circleci.com/gh/tipidapp/mobile)
+[![codecov](https://codecov.io/gh/tipidapp/mobile/branch/master/graph/badge.svg)](https://codecov.io/gh/tipidapp/mobile)
 
 This is the mobile app of Tipid - an open source envelope budgeting platform.
 
