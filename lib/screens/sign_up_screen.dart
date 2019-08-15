@@ -146,7 +146,7 @@ class SignUpFormState extends State<SignUpForm> {
 
   Widget _signUpButton(BuildContext context) {
     final AuthenticationService authenticationService =
-        AuthenticationService(context: context, formKey: formKey);
+        AuthenticationService(context: context);
 
     return Consumer<AuthenticationState>(
       child: const Text('Register'),
@@ -156,12 +156,16 @@ class SignUpFormState extends State<SignUpForm> {
           key: signUpButtonKey,
           onPressed: authenticationState.loading
               ? null
-              : () => authenticationService.signUp(
-                  emailController,
-                  passwordController,
-                  passwordConfirmationController,
-                  firstNameController,
-                  lastNameController),
+              : () {
+                  if (formKey.currentState.validate()) {
+                    authenticationService.signUp(
+                        emailController,
+                        passwordController,
+                        passwordConfirmationController,
+                        firstNameController,
+                        lastNameController);
+                  }
+                },
           child: authenticationState.loading
               ? const CircularProgressIndicator()
               : child,
