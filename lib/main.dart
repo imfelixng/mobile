@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:provider/provider.dart';
 
+import 'package:tipid/api/authentication_api.dart';
 import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/settings_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
 import 'package:tipid/screens/sign_up_screen.dart';
-import 'package:tipid/widgets/api_provider.dart';
 import 'package:tipid/widgets/main_view.dart';
-import 'package:tipid/utils/api.dart';
 
 void main() => runApp(MyApp());
 
@@ -28,32 +27,30 @@ class MyApp extends StatelessWidget {
       ),
     );
 
-    final TipidApi api = TipidApi(client: client.value);
+    final AuthenticationApi authenticationApi = AuthenticationApi(client.value);
 
     return GraphQLProvider(
       client: client,
       child: MultiProvider(
-        providers: <ChangeNotifierProvider<dynamic>>[
+        providers: <SingleChildCloneableWidget>[
+          Provider<AuthenticationApi>.value(value: authenticationApi),
           ChangeNotifierProvider<AuthenticationState>(
             builder: (BuildContext context) => AuthenticationState(),
           ),
         ],
-        child: TipidApiProvider(
-          api: api,
-          child: MaterialApp(
-            title: 'Tipid',
-            theme: ThemeData(
-              primarySwatch: Colors.blue,
-            ),
-            initialRoute: '/',
-            routes: <String, WidgetBuilder>{
-              '/': (BuildContext context) => MainView(),
-              '/dashboard': (BuildContext context) => DashboardScreen(),
-              '/settings': (BuildContext context) => SettingsScreen(),
-              '/sign_in': (BuildContext context) => SignInScreen(),
-              '/sign_up': (BuildContext context) => SignUpScreen(),
-            },
+        child: MaterialApp(
+          title: 'Tipid',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
           ),
+          initialRoute: '/',
+          routes: <String, WidgetBuilder>{
+            '/': (BuildContext context) => MainView(),
+            '/dashboard': (BuildContext context) => DashboardScreen(),
+            '/settings': (BuildContext context) => SettingsScreen(),
+            '/sign_in': (BuildContext context) => SignInScreen(),
+            '/sign_up': (BuildContext context) => SignUpScreen(),
+          },
         ),
       ),
     );

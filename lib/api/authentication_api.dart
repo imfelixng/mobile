@@ -1,11 +1,10 @@
 import 'package:graphql/client.dart';
 
+import 'package:tipid/api/api.dart';
 import 'package:tipid/models/session.dart';
 
-class TipidApi {
-  TipidApi({this.client});
-
-  GraphQLClient client;
+class AuthenticationApi extends TipidApi {
+  AuthenticationApi(GraphQLClient client) : super(client);
 
   Future<Session> signIn(String email, String password) async {
     final QueryResult result = await client.mutate(MutationOptions(document: '''

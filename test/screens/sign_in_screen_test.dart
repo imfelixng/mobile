@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:graphql/client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:tipid/api/authentication_api.dart';
 import 'package:tipid/models/session.dart';
 import 'package:tipid/models/user.dart';
 import 'package:tipid/state/authentication_state.dart';
@@ -12,47 +13,47 @@ import 'package:tipid/screens/dashboard_screen.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
 import 'package:tipid/widgets/authenticated_view.dart';
-import 'package:tipid/widgets/api_provider.dart';
-import 'package:tipid/utils/api.dart';
 
 import '../mocks.dart';
 
 void main() {
   group('Sign In Screen tests', () {
     NavigatorObserver mockObserver;
-    TipidApi mockApi;
+    AuthenticationApi mockAuthenticationApi;
 
     setUp(() {
       mockObserver = MockNavigatorObserver();
-      mockApi = MockTipidApi();
+      mockAuthenticationApi = MockAuthenticationApi();
       SharedPreferences.setMockInitialValues(<String, dynamic>{});
     });
 
     Future<void> _buildSignInScreen(WidgetTester tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider<AuthenticationState>(
-        builder: (BuildContext context) => AuthenticationState(),
-        child: TipidApiProvider(
-          api: mockApi,
-          child: MaterialApp(
-            initialRoute: '/',
-            routes: <String, WidgetBuilder>{
-              '/': (BuildContext context) {
-                return Consumer<AuthenticationState>(
-                  builder: (BuildContext context,
-                      AuthenticationState authenticationState, Widget child) {
-                    if (authenticationState.authenticated) {
-                      return AuthenticatedView();
-                    } else {
-                      return child;
-                    }
-                  },
-                  child: LandingScreen(),
-                );
-              },
-              '/sign_in': (BuildContext context) => SignInScreen(),
-            },
-            navigatorObservers: <NavigatorObserver>[mockObserver],
+      await tester.pumpWidget(MultiProvider(
+        providers: <SingleChildCloneableWidget>[
+          Provider<AuthenticationApi>.value(value: mockAuthenticationApi),
+          ChangeNotifierProvider<AuthenticationState>(
+            builder: (_) => AuthenticationState(),
           ),
+        ],
+        child: MaterialApp(
+          initialRoute: '/',
+          routes: <String, WidgetBuilder>{
+            '/': (BuildContext context) {
+              return Consumer<AuthenticationState>(
+                builder: (BuildContext context,
+                    AuthenticationState authenticationState, Widget child) {
+                  if (authenticationState.authenticated) {
+                    return AuthenticatedView();
+                  } else {
+                    return child;
+                  }
+                },
+                child: LandingScreen(),
+              );
+            },
+            '/sign_in': (BuildContext context) => SignInScreen(),
+          },
+          navigatorObservers: <NavigatorObserver>[mockObserver],
         ),
       ));
 
@@ -80,13 +81,13 @@ void main() {
             lastName: 'User',
             registeredAt: DateTime.parse('2019-06-01T08:00:20')),
       );
-      when(mockApi.signIn(any, any))
+      when(mockAuthenticationApi.signIn(any, any))
           .thenAnswer((_) => Future<Session>.value(session));
 
       await tester.tap(find.byKey(SignInFormState.signInButtonKey));
       await tester.pumpAndSettle();
 
-      verify(mockApi.signIn(any, any));
+      verify(mockAuthenticationApi.signIn(any, any));
       verify(mockObserver.didPop(any, any));
       expect(find.byType(DashboardScreen), findsOneWidget);
     });
@@ -106,13 +107,13 @@ void main() {
           GraphQLError(message: 'no user with matching credentials found'),
         ],
       );
-      when(mockApi.signIn(any, any))
+      when(mockAuthenticationApi.signIn(any, any))
           .thenAnswer((_) => Future<Session>.value(session));
 
       await tester.tap(find.byKey(SignInFormState.signInButtonKey));
       await tester.pumpAndSettle();
 
-      verify(mockApi.signIn(any, any));
+      verify(mockAuthenticationApi.signIn(any, any));
       verifyNever(mockObserver.didPop(any, any));
       expect(find.byType(DashboardScreen), findsNothing);
       expect(find.byType(SnackBar), findsOneWidget);

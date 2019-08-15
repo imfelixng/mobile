@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:tipid/api/authentication_api.dart';
 import 'package:tipid/models/session.dart';
 import 'package:tipid/state/authentication_state.dart';
-import 'package:tipid/utils/api.dart';
-import 'package:tipid/widgets/api_provider.dart';
 
 class AuthenticationService {
   AuthenticationService({
@@ -14,13 +13,13 @@ class AuthenticationService {
     this.formKey,
   }) {
     authenticationState = Provider.of<AuthenticationState>(context);
-    api = TipidApiProvider.of(context);
+    api = Provider.of<AuthenticationApi>(context);
   }
 
   BuildContext context;
   GlobalKey<FormState> formKey;
   AuthenticationState authenticationState;
-  TipidApi api;
+  AuthenticationApi api;
 
   Future<void> checkAuthenticationStatus() async {
     authenticationState.authenticationRequest();

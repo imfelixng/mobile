@@ -3,36 +3,37 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:provider/provider.dart';
 
+import 'package:tipid/api/authentication_api.dart';
 import 'package:tipid/state/authentication_state.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/screens/sign_in_screen.dart';
-import 'package:tipid/utils/api.dart';
-import 'package:tipid/widgets/api_provider.dart';
 
 import '../mocks.dart';
 
 void main() {
   group('Landing Screen tests', () {
     NavigatorObserver mockObserver;
-    TipidApi mockApi;
+    AuthenticationApi mockAuthenticationApi;
 
     setUp(() {
       mockObserver = MockNavigatorObserver();
-      mockApi = MockTipidApi();
+      mockAuthenticationApi = MockAuthenticationApi();
     });
 
     Future<void> _buildLandingScreen(WidgetTester tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider<AuthenticationState>(
-        builder: (BuildContext context) => AuthenticationState(),
-        child: TipidApiProvider(
-          api: mockApi,
-          child: MaterialApp(
-            home: LandingScreen(),
-            routes: <String, WidgetBuilder>{
-              '/sign_in': (BuildContext context) => SignInScreen(),
-            },
-            navigatorObservers: <NavigatorObserver>[mockObserver],
+      await tester.pumpWidget(MultiProvider(
+        providers: <SingleChildCloneableWidget>[
+          Provider<AuthenticationApi>.value(value: mockAuthenticationApi),
+          ChangeNotifierProvider<AuthenticationState>(
+            builder: (_) => AuthenticationState(),
           ),
+        ],
+        child: MaterialApp(
+          home: LandingScreen(),
+          routes: <String, WidgetBuilder>{
+            '/sign_in': (BuildContext context) => SignInScreen(),
+          },
+          navigatorObservers: <NavigatorObserver>[mockObserver],
         ),
       ));
     }

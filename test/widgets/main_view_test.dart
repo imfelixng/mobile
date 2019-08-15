@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:tipid/api/authentication_api.dart';
 import 'package:tipid/screens/landing_screen.dart';
 import 'package:tipid/state/authentication_state.dart';
-import 'package:tipid/utils/api.dart';
-import 'package:tipid/widgets/api_provider.dart';
 import 'package:tipid/widgets/authenticated_view.dart';
 import 'package:tipid/widgets/main_view.dart';
 
@@ -14,20 +13,22 @@ import '../mocks.dart';
 
 void main() {
   group('Main View tests', () {
-    TipidApi mockApi;
+    AuthenticationApi mockAuthenticationApi;
 
     setUp(() {
-      mockApi = MockTipidApi();
+      mockAuthenticationApi = MockAuthenticationApi();
     });
 
     Future<void> _buildMainView(WidgetTester tester) async {
-      await tester.pumpWidget(ChangeNotifierProvider<AuthenticationState>(
-        builder: (BuildContext context) => AuthenticationState(),
-        child: TipidApiProvider(
-          api: mockApi,
-          child: MaterialApp(
-            home: MainView(),
+      await tester.pumpWidget(MultiProvider(
+        providers: <SingleChildCloneableWidget>[
+          Provider<AuthenticationApi>.value(value: mockAuthenticationApi),
+          ChangeNotifierProvider<AuthenticationState>(
+            builder: (_) => AuthenticationState(),
           ),
+        ],
+        child: MaterialApp(
+          home: MainView(),
         ),
       ));
 

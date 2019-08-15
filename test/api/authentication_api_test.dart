@@ -2,8 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:graphql/client.dart';
 import 'package:mockito/mockito.dart';
 
+import 'package:tipid/api/authentication_api.dart';
 import 'package:tipid/models/session.dart';
-import 'package:tipid/utils/api.dart';
 
 import '../mocks.dart';
 
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('signIn with valid credentials returns successful Session', () async {
-      final TipidApi api = TipidApi(client: mockGraphQLClient);
+      final AuthenticationApi api = AuthenticationApi(mockGraphQLClient);
 
       final QueryResult mockResult = QueryResult(
         data: <String, dynamic>{
@@ -50,7 +50,7 @@ void main() {
 
     test('signIn with non-existing credentials returns failed Session',
         () async {
-      final TipidApi api = TipidApi(client: mockGraphQLClient);
+      final AuthenticationApi api = AuthenticationApi(mockGraphQLClient);
 
       final QueryResult mockResult = QueryResult(
         errors: <GraphQLError>[
@@ -70,7 +70,7 @@ void main() {
     });
 
     test('signUp with valid credentials returns successful Session', () async {
-      final TipidApi api = TipidApi(client: mockGraphQLClient);
+      final AuthenticationApi api = AuthenticationApi(mockGraphQLClient);
 
       final QueryResult mockResult = QueryResult(
         data: <String, dynamic>{
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('signUp with existing email returns failed Session', () async {
-      final TipidApi api = TipidApi(client: mockGraphQLClient);
+      final AuthenticationApi api = AuthenticationApi(mockGraphQLClient);
 
       final QueryResult mockResult = QueryResult(
         errors: <GraphQLError>[
